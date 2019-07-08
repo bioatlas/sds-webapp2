@@ -1,10 +1,7 @@
 language: groovy
 jdk:
-- oraclejdk8
+  - openjdk8
 sudo: false
-branches:
-  only:
-  - master
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
   - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
@@ -13,9 +10,17 @@ cache:
     - $HOME/.m2
     - $HOME/.gradle/caches/
     - $HOME/.gradle/wrapper/
-after_success:
-  - '[ "${TRAVIS_PULL_REQUEST}" = "false" ] && travis_retry ./gradlew publish'
-env:
-  global:
-  - secure: hoYu5PwbsNn2uY/RhAG1jx+rKqqFihc191dm9ckybeJ1GOSICm5dzZX1a/FRZzfnoqontjyuAJl+CLvAsYpCHB8CAHChGdBlHF8QtaTL8dfIFmq/Wc5ogrgLSDollltbyYlorR/RhDklOuN3dOe8fz06Uk7HpjWW5E2jAzq6PSY=
-  - secure: Zlep5iq5qvAk72LiSRlcwI0BYHp0sDdm/iyDp/umVNCVA4/jzPdmf+Mml9gmyiR9sJwVwA5/AeyTcKsO/FXTEnfHYDtCbXOptHj84m8pQ93OlrD2e0tndpzg7oVwRmj9dJeBPu61XcxPRfXuPRy6C1++kR36ZcAIKqApOArT0EI=
+script:
+  - "./gradlew clean && ./gradlew war"
+deploy:
+  provider: releases
+  api_key:
+    secure: iNEdPGNRCEks8X+M8dLzDGvJaC8u+x5DpgIlYacZI8ygTmDiMu7R/UrjgLl213H05e91ZBe/F7NCDK0oeztxp6VzyU/9prXxyWQxvULagqUKWFKgJcVZTUABqtcptNmpfy+OV2WYRoN4MuVoNYhdvKTcJPnEowCatl7oJNo2pJ1Vnokt/s9uj2WxEkvrEW6n8+44I2qp50TvvRD/jEyloM+u23EQ3SLs1SrRB0Ri1n/fV5iHJnBgRDvV47wBXrI0OyKadfh2TYfa3cL1DT+jh5GNtl1KC2wsnRr7rlBZkLNv62LXYYAY/DqafjC3vwCKhpgsVFmyQZ80r4iHdNYY4wwbrKy0y3BM5uy5kjcMQoS3uyKRZUpESx5qG3NI6Wb535pQRWfS+Nc7Z1Ard4yflkKL0ELTDukbXqJorygYMSxbOXdcVmp1Zhv/7PXwZKZti9wnJCC7K8wto9ezcrRhe4rMBNdusL67YAcxskJjJ7T5vC5NYth6UdNsW8u4yC5CBMxBJuc1d2Kv4xaq0e4HOhPx6OXnZQZ3nlGT5csI4ySJ4DN2399257ZIAQTNM+97zQFIjWzX7dDLXkX/zh9VErHwQo5HYmU98SsXPE2OyXhyngvMk5mgl/myF/iNNoxGNhZBQcaMr5Te2X0XeDpQCQCb3A5e5M0gvrM1iCvot4s=
+  file_glob: true
+  file: build/libs/sds-webapp2-*.war
+  skip_cleanup: true
+  overwrite: true
+  on:
+    repo: bioatlas/sds-webapp2
+    all-branches: true
+    tags: true
